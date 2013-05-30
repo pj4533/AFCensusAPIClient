@@ -24,28 +24,52 @@
 #import "AFFCCAPIClient.h"
 #import "AFNetworking.h"
 
-NSString *kCensusAPIKey = @"";
+static NSString * const kCensusBaseURLString = @"http://api.census.gov/";
 
-NSString *kCensusMetric_MedianHouseholdIncome = @"B19013_001E";
+NSString * kCensusMetric_MedianHouseholdIncome = @"B19013_001E";
 
-NSString *kCensusMetric_LowerValueForOwnerOccupiedHousing = @"B25076_001E";
-NSString *kCensusMetric_MedianValueForOwnerOccupiedHousing = @"B25077_001E";
-NSString *kCensusMetric_UpperValueForOwnerOccupiedHousing = @"B25078_001E";
+NSString * kCensusMetric_LowerValueForOwnerOccupiedHousing = @"B25076_001E";
+NSString * kCensusMetric_MedianValueForOwnerOccupiedHousing = @"B25077_001E";
+NSString * kCensusMetric_UpperValueForOwnerOccupiedHousing = @"B25078_001E";
 
-NSString *kCensusMetric_OwnerOccupiedHousing = @"B25076_001E,B25077_001E,B25078_001E";
+NSString * kCensusMetric_OwnerOccupiedHousing = @"B25076_001E,B25077_001E,B25078_001E";
 
 @implementation AFCensusAPIClient
 
-+ (AFCensusAPIClient*) censusAPIClient {
-    NSString* urlString = @"http://api.census.gov/";
-    AFCensusAPIClient* client = [[AFCensusAPIClient alloc] initWithBaseURL:[NSURL URLWithString:urlString]];
-    [client registerHTTPOperationClass:[AFJSONRequestOperation class]];
-    [client setDefaultHeader:@"Accept" value:@"application/json"];
++ (instancetype)sharedClient {
+    static AFCensusAPIClient *_sharedClient = nil;
+    static dispatch_once_t oncePredicate;
+    dispatch_once(&oncePredicate, ^{
+        _sharedClient = [[self alloc] init];
+    });
     
-    client.parameterEncoding = AFJSONParameterEncoding;
-    return client;
-    
+    return _sharedClient;
 }
+
+- (instancetype)initWithAPIKey:(NSString*)apiKey {
+    self = [self init];
+    if (!self) {
+        return nil;
+    }
+    self.apiKey = apiKey;
+    
+    return self;
+}
+
+- (instancetype)init {
+    self = [super initWithBaseURL:[NSURL URLWithString:kCensusBaseURLString]];
+    if (!self) {
+        return nil;
+    }
+    
+    [self registerHTTPOperationClass:[AFJSONRequestOperation class]];
+    [self setDefaultHeader:@"Accept" value:@"application/json"];
+    
+    self.parameterEncoding = AFJSONParameterEncoding;
+    
+    return self;
+}
+
 
 - (void)getMetric:(NSString*) metric
           withLat:(NSString*) lat
@@ -55,22 +79,22 @@ NSString *kCensusMetric_OwnerOccupiedHousing = @"B25076_001E,B25077_001E,B25078_
     
     [[AFFCCAPIClient fccAPIClient] getFIPSWithLat:lat withLng:lng success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSDictionary* params = @{
-                                 @"key": kCensusAPIKey,
+                                 @"key": self.apiKey,
                                  @"get": metric,
-                                 @"for": [NSString stringWithFormat:@"tract:%@",[responseObject objectForKey:@"tract"]],
-                                 @"in": [NSString stringWithFormat:@"state:%@+county:%@",[responseObject objectForKey:@"state"], [responseObject objectForKey:@"county"]],
+                                 @"for": [NSString stringWithFormat:@"tract:%@",responseObject[@"tract"]],
+                                 @"in": [NSString stringWithFormat:@"state:%@+county:%@",responseObject[@"state"], responseObject[@"county"]],
                                  };
         [super getPath:@"data/2010/acs5" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
             if ([responseObject isKindOfClass:[NSArray class]]) {
                 NSArray* resultArray = responseObject;
                 if ([resultArray count] > 1) {
-                    NSArray* descArray = [resultArray objectAtIndex:0];
-                    NSArray* valuesArray = [resultArray objectAtIndex:1];
-                    NSMutableDictionary* returnDict = [[NSMutableDictionary alloc] init];
+                    NSArray* descArray = resultArray[0];
+                    NSArray* valuesArray = resultArray[1];
+                    NSMutableDictionary* returnDict = [NSMutableDictionary dictionary];
                     for (int i = 0; i < [descArray count]; i++) {
-                        NSString* thisKey = [descArray objectAtIndex:i];
-                        NSString* thisResult = [valuesArray objectAtIndex:i];
-                        [returnDict setObject:thisResult forKey:thisKey];
+                        NSString* thisKey = descArray[i];
+                        NSString* thisResult = valuesArray[i];
+                        returnDict[thisKey] = thisResult;
                     }
                     success(operation, returnDict);
                 }

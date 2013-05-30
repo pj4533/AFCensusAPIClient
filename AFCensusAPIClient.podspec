@@ -11,5 +11,5 @@ Pod::Spec.new do |s|
   s.source_files = 'AFCensusAPIClient'
   s.requires_arc = true  
   s.ios.deployment_target = '5.0'
-  s.dependency 'AFFCCAPIClient', :git => 'git@github.com:pj4533/AFFCCAPIClient.git'
+#  s.dependency 'AFFCCAPIClient'
 end

@@ -1,0 +1,22 @@
+PODS:
+  - AFCensusAPIClient (0.0.1)
+  - AFFCCAPIClient (0.0.1):
+    - AFNetworking
+  - AFNetworking (1.2.1)
+
+DEPENDENCIES:
+  - AFCensusAPIClient (from `../`)
+  - AFFCCAPIClient (from `git@github.com:pj4533/AFFCCAPIClient.git`)
+
+EXTERNAL SOURCES:
+  AFCensusAPIClient:
+    :path: ../
+  AFFCCAPIClient:
+    :git: git@github.com:pj4533/AFFCCAPIClient.git
+
+SPEC CHECKSUMS:
+  AFCensusAPIClient: bbf50d004f9d458c529e22f3390c9459c2cd28bb
+  AFFCCAPIClient: 6bb267e623d486735b220756df08af98f040c8b1
+  AFNetworking: a44069e3c9c89867544f6639482f155c7e5f9b41
+
+COCOAPODS: 0.20.2

@@ -22,21 +22,25 @@
 
 #import "AFHTTPClient.h"
 
+// Supported metrics
 extern NSString *kCensusMetric_MedianHouseholdIncome;
-
 extern NSString *kCensusMetric_LowerValueForOwnerOccupiedHousing;
 extern NSString *kCensusMetric_MedianValueForOwnerOccupiedHousing;
 extern NSString *kCensusMetric_UpperValueForOwnerOccupiedHousing;
 extern NSString *kCensusMetric_OwnerOccupiedHousing;
 
+
 @interface AFCensusAPIClient : AFHTTPClient
 
-+ (AFCensusAPIClient*) censusAPIClient;
++ (instancetype)sharedClient;
+- (instancetype)initWithAPIKey:(NSString*)apiKey;
 
 - (void)getMetric:(NSString*) metric
           withLat:(NSString*) lat
           withLng:(NSString*) lng
           success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+
+@property (strong, nonatomic) NSString* apiKey;
 
 @end
