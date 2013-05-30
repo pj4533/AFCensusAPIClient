@@ -1,2 +1,1 @@
 pod 'AFCensusAPIClient', :path => "../"
-pod 'AFFCCAPIClient', :git => 'git@github.com:pj4533/AFFCCAPIClient.git'
