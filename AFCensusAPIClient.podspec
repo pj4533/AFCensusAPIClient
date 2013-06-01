@@ -11,5 +11,5 @@ Pod::Spec.new do |s|
   s.source_files = 'AFCensusAPIClient'
   s.requires_arc = true  
   s.ios.deployment_target = '5.0'
-  s.dependency 'AFFCCAPIClient'
+  s.dependency 'AFFCCAPIClient', '> 0.0.1'  
 end
