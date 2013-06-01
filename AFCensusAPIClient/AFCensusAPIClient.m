@@ -77,7 +77,7 @@ NSString * kCensusMetric_OwnerOccupiedHousing = @"B25076_001E,B25077_001E,B25078
           success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
           failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure {
     
-    [[AFFCCAPIClient fccAPIClient] getFIPSWithLat:lat withLng:lng success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [[AFFCCAPIClient sharedClient] getFIPSWithLat:lat withLng:lng success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSDictionary* params = @{
                                  @"key": self.apiKey,
                                  @"get": metric,
