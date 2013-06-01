@@ -2,7 +2,18 @@
 
 An AFHTTPClient subclass for the [Census API](http://www.census.gov/developers/).
 
-## Usage
+## Instructions
+
+#### Install
+Available on CocoaPods, simply add to your Podfile:
+
+```
+pod 'AFCensusAPIClient'
+```
+
+then do a 'pod install'
+
+#### Code
 
 Go to the above link to get your census API key.
 
